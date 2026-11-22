@@ -350,6 +350,150 @@ ob_start();
 
 </div>
 
+<div class="card mt-4">
+
+    <div class="card-header bg-dark text-white">
+
+        <i class="fas fa-road me-2"></i>
+
+        Future Development
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row g-3">
+
+<div class="col-md-3">
+
+    <div class="card h-100 border-primary">
+
+        <div class="card-body text-center">
+
+            <i class="fas fa-chart-bar fa-2x text-primary mb-3"></i>
+
+            <h5>Reports</h5>
+
+            <span class="badge bg-secondary">
+                Planned
+            </span>
+
+            <div class="mt-3">
+
+                <a href="/under-construction?feature=Reports"
+                   class="btn btn-outline-primary">
+
+                    Open
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="col-md-3">
+
+    <div class="card h-100 border-success">
+
+        <div class="card-body text-center">
+
+            <i class="fas fa-chart-line fa-2x text-success mb-3"></i>
+
+            <h5>Analytics</h5>
+
+            <span class="badge bg-secondary">
+                Planned
+            </span>
+
+            <div class="mt-3">
+
+                <a href="/under-construction?feature=Analytics"
+                   class="btn btn-outline-success">
+
+                    Open
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="col-md-3">
+
+    <div class="card h-100 border-warning">
+
+        <div class="card-body text-center">
+
+            <i class="fas fa-users fa-2x text-warning mb-3"></i>
+
+            <h5>User Management</h5>
+
+            <span class="badge bg-secondary">
+                Planned
+            </span>
+
+            <div class="mt-3">
+
+                <a href="/under-construction?feature=User%20Management"
+                   class="btn btn-outline-warning">
+
+                    Open
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="col-md-3">
+
+    <div class="card h-100 border-danger">
+
+        <div class="card-body text-center">
+
+            <i class="fas fa-database fa-2x text-danger mb-3"></i>
+
+            <h5>Backup Centre</h5>
+
+            <span class="badge bg-secondary">
+                Planned
+            </span>
+
+            <div class="mt-3">
+
+                <a href="/under-construction?feature=Backup%20Centre"
+                   class="btn btn-outline-danger">
+
+                    Open
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+        </div>
+
+    </div>
+
+</div>
+
 <?php
 
 $content = ob_get_clean();

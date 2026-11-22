@@ -39,7 +39,7 @@ $currentPath = parse_url(
 
             <li class="nav-item mb-2">
 
-                <a href="/import"
+                <a href="/under-construction?feature=import"
                    class="nav-link text-white">
 
                     <i class="fas fa-file-import"></i>
@@ -52,7 +52,7 @@ $currentPath = parse_url(
 
             <li class="nav-item mb-2">
 
-                <a href="/export"
+                <a href="/under-construction?feature=export"
                    class="nav-link text-white">
 
                     <i class="fas fa-file-export"></i>
@@ -65,7 +65,7 @@ $currentPath = parse_url(
 
             <li class="nav-item mb-2">
 
-                <a href="/reports"
+                <a href="/under-construction?feature=reports"
                    class="nav-link text-white">
 
                     <i class="fas fa-chart-pie"></i>
@@ -78,7 +78,7 @@ $currentPath = parse_url(
 
             <li class="nav-item mb-2">
 
-                <a href="/settings"
+                <a href="/under-construction?feature=settings"
                    class="nav-link text-white">
 
                     <i class="fas fa-cog"></i>

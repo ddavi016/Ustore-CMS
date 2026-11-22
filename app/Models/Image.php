@@ -27,6 +27,7 @@ class Image
         );
     }
 
+
     public static function create(
         int $unitId,
         string $imageName,

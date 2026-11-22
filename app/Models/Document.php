@@ -109,4 +109,14 @@ public static function delete(
             $storedFilename
         ]);
     }
+public static function countAll()
+{
+    $pdo = Database::connection();
+
+    return $pdo
+        ->query(
+            "SELECT COUNT(*) FROM documents"
+        )
+       ->fetchColumn();
+}
 }

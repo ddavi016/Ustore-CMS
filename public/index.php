@@ -58,6 +58,16 @@ if ($uri === '/dashboard') {
     exit;
 }
 
+if ($uri === '/under-construction') {
+
+    AuthMiddleware::check();
+
+    require __DIR__ .
+        '/views/under-construction.php';
+
+    exit;
+}
+
 if ($uri === '/units') {
 
     AuthMiddleware::check();

@@ -22,6 +22,7 @@ class Unit
         );
     }
 
+
 public static function countAll()
 {
     $pdo = Database::connection();
