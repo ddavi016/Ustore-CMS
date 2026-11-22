@@ -1,0 +1,21 @@
+{
+    "name": "root/storage-cms",
+    "description": "Storage Unit Managament CMS",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Damian Davies"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.8",
+        "robthree/twofactorauth": "^2.1",
+        "phpoffice/phpspreadsheet": "^3.10",
+        "endroid/qr-code": "^5.1"
+    }
+}

@@ -1,0 +1,871 @@
+<?php
+
+use App\Models\Unit;
+use App\Models\Document;
+use App\Models\Image;
+use App\Models\AuditLog;
+
+
+$id = (int)($_GET['id'] ?? 0);
+$history = AuditLog::byUnit($id);
+$unit = Unit::find($id);
+$documents = Document::byUnit($id);
+$images = Image::byUnit($id);
+$pageTitle = 'Unit ' . $unit['unit_code'];
+$documentCount = count($documents);
+$imageCount = count($images);
+$latestActivity = AuditLog::latest($id) ?? [];
+
+?>
+
+<h2 class="mb-4">
+
+    Unit <?= htmlspecialchars(
+        $unit['unit_code']
+    ) ?>
+
+</h2>
+
+
+<div class="card mb-4">
+
+    <div class="card-header">
+
+        Unit Summary
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-md-2">
+
+                <strong>Status</strong>
+
+                <br>
+
+                <?= htmlspecialchars(
+                    $unit['occupancy_status']
+                ) ?>
+
+            </div>
+
+            <div class="col-md-2">
+
+                <strong>Arrears</strong>
+
+                <br>
+
+                <?= htmlspecialchars(
+                    $unit['arrears_status']
+                ) ?>
+
+            </div>
+
+            <div class="col-md-2">
+
+                <strong>Documents</strong>
+
+                <br>
+
+                <?= $documentCount ?>
+
+            </div>
+
+            <div class="col-md-2">
+
+                <strong>Images</strong>
+
+                <br>
+
+                <?= $imageCount ?>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <strong>Last Activity</strong>
+
+                <br>
+
+                <?php if (!empty($latestActivity['created_at'])): ?>
+
+			<?= date(
+    			'd/m/Y H:i',
+   			strtotime($latestActivity['created_at'])
+			) ?>
+
+                <?php else: ?>
+
+                    No activity
+
+                <?php endif; ?>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<?php
+<?php
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    !isset($_FILES['document']) &&
+    !isset($_FILES['image'])
+)
+{
+    $originalUnit = Unit::find($id);
+    Unit::update(
+
+        $id,
+        $_POST
+    );
+
+if (
+    $originalUnit['occupancy_status']
+    !==
+    $_POST['occupancy_status']
+)
+{
+    AuditLog::create(
+
+        $_SESSION['user_id'],
+
+        'UPDATE',
+
+        'UNIT',
+
+        $id,
+
+        'Occupancy Status changed: ' .
+
+        $originalUnit['occupancy_status'] .
+
+        ' → ' .
+
+        $_POST['occupancy_status']
+
+    );
+}
+
+if (
+    $originalUnit['arrears_status']
+    !==
+    $_POST['arrears_status']
+)
+{
+    AuditLog::create(
+
+        $_SESSION['user_id'],
+
+        'UPDATE',
+
+        'UNIT',
+
+        $id,
+
+        'Arrears Status changed: ' .
+
+        $originalUnit['arrears_status'] .
+
+        ' → ' .
+
+        $_POST['arrears_status']
+
+    );
+}
+
+if (
+    trim(
+        $originalUnit['occupier_name']
+    )
+    !==
+    trim(
+        $_POST['occupier_name']
+    )
+)
+{
+    AuditLog::create(
+
+        $_SESSION['user_id'],
+
+        'UPDATE',
+
+        'UNIT',
+
+        $id,
+
+        'Occupier changed: ' .
+
+        (
+            $originalUnit['occupier_name']
+            ?: '(empty)'
+        ) .
+
+        ' → ' .
+
+        (
+            $_POST['occupier_name']
+            ?: '(empty)'
+        )
+
+    );
+}
+
+if (
+    trim(
+        $originalUnit['occupier_address']
+    )
+    !==
+    trim(
+        $_POST['occupier_address']
+    )
+)
+{
+    AuditLog::create(
+
+        $_SESSION['user_id'],
+
+        'UPDATE',
+
+        'UNIT',
+
+        $id,
+
+        'Occupier address updated.'
+
+    );
+}
+
+if (
+    trim(
+        $originalUnit['notes']
+    )
+    !==
+    trim(
+        $_POST['notes']
+    )
+)
+{
+    AuditLog::create(
+
+        $_SESSION['user_id'],
+
+        'UPDATE',
+
+        'UNIT',
+
+        $id,
+
+        'Unit notes updated.'
+
+    );
+}
+
+
+
+    header(
+        'Location: /units?saved=1'
+    );
+
+    exit;
+}
+
+ob_start();
+
+?>
+
+
+<?php if (isset($_GET['saved'])): ?>
+
+<div
+    id="saveAlert"
+    class="alert alert-success alert-dismissible fade show auto-alert">
+
+    Unit updated successfully.
+
+    <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert">
+    </button>
+
+</div>
+
+<?php endif; ?>
+
+<?php if (isset($_GET['upload'])): ?>
+
+<div
+    id="uploadAlert"
+    class="alert alert-success alert-dismissible fade show auto-alert">
+
+    Document uploaded successfully.
+
+    <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert">
+    </button>
+
+</div>
+
+<?php endif; ?>
+
+<!-- COLOUR CODE -->
+
+
+<?php if (isset($_GET['deleted'])): ?>
+
+<div
+    id="deleteAlert"
+    class="alert alert-success alert-dismissible fade show auto-alert">
+
+    Document deleted successfully.
+
+    <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert">
+    </button>
+
+</div>
+
+<?php endif; ?>
+
+<?php if (isset($_GET['image'])): ?>
+
+<div
+    id="imageAlert"
+    class="alert alert-success alert-dismissible fade show auto-alert">
+
+    Image uploaded successfully.
+
+    <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert">
+    </button>
+
+</div>
+
+<?php endif; ?>
+
+<?php if (isset($_GET['imagedeleted'])): ?>
+
+<div
+    id="imageDeleteAlert"
+    class="alert alert-success alert-dismissible fade show auto-alert">
+
+    Image deleted successfully.
+
+    <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert">
+    </button>
+
+</div>
+
+<?php endif; ?>
+
+<h2 class="mb-4">
+
+    Unit <?= htmlspecialchars($unit['unit_code']) ?>
+
+</h2>
+
+
+<div class="card mb-4">
+
+    <div class="card-header">
+
+        Unit Details
+
+    </div>
+
+    <div class="card-body">
+
+        <form method="POST">
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Occupancy Status
+                        </label>
+
+                        <select
+                            name="occupancy_status"
+                            class="form-select">
+
+                            <option
+                                value="Occupied"
+                                <?= $unit['occupancy_status'] === 'Occupied' ? 'selected' : '' ?>>
+                                Occupied
+                            </option>
+
+                            <option
+                                value="Vacant"
+                                <?= $unit['occupancy_status'] === 'Vacant' ? 'selected' : '' ?>>
+                                Vacant
+                            </option>
+
+                            <option
+                                value="Reserved"
+                                <?= $unit['occupancy_status'] === 'Reserved' ? 'selected' : '' ?>>
+                                Reserved
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Arrears Status
+                        </label>
+
+                        <select
+                            name="arrears_status"
+                            class="form-select">
+
+                            <option
+                                value="Current"
+                                <?= $unit['arrears_status'] === 'Current' ? 'selected' : '' ?>>
+                                Current
+                            </option>
+
+                            <option
+                                value="Outstanding"
+                                <?= $unit['arrears_status'] === 'Outstanding' ? 'selected' : '' ?>>
+                                Outstanding
+                            </option>
+
+                            <option
+                                value="Overdue"
+                                <?= $unit['arrears_status'] === 'Overdue' ? 'selected' : '' ?>>
+                                Overdue
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Occupier Name
+                </label>
+
+                <input
+                    type="text"
+                    name="occupier_name"
+                    class="form-control"
+                    value="<?= htmlspecialchars($unit['occupier_name']) ?>">
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Occupier Address
+                </label>
+
+                <textarea
+                    name="occupier_address"
+                    class="form-control"
+                    rows="4"><?= htmlspecialchars($unit['occupier_address']) ?></textarea>
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Notes
+                </label>
+
+                <textarea
+                    name="notes"
+                    class="form-control"
+                    rows="6"><?= htmlspecialchars($unit['notes']) ?></textarea>
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-success">
+
+                Save Changes
+
+            </button>
+
+            <a
+                href="/units"
+                class="btn btn-secondary">
+
+                Cancel
+
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<div class="card mb-4">
+
+    <div class="card-header">
+
+        Unit Documents
+
+    </div>
+
+    <div class="card-body">
+
+        <form
+            action="/document/upload"
+            method="POST"
+            enctype="multipart/form-data">
+
+            <input
+                type="hidden"
+                name="unit_id"
+                value="<?= $id ?>">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Document Name
+                </label>
+
+                <input
+                    type="text"
+                    name="document_name"
+                    class="form-control"
+                    required>
+
+            </div>
+
+            <div class="mb-3">
+
+                <input
+                    type="file"
+                    name="document"
+                    class="form-control"
+                    required>
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary">
+
+                Upload Document
+
+            </button>
+
+        </form>
+
+        <hr>
+
+        <table class="table table-striped">
+
+            <thead>
+
+                <tr>
+
+                    <th>Name</th>
+                    <th>Document</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <?php foreach ($documents as $doc): ?>
+
+                    <tr>
+
+                        <td>
+
+                            <?= htmlspecialchars($doc['document_name']) ?>
+
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="/uploads/documents/<?= $doc['stored_filename'] ?>"
+                                target="_blank">
+
+                                <?= htmlspecialchars($doc['original_filename']) ?>
+
+                            </a>
+
+                        </td>
+
+                        <td>
+
+                            <?= date('d/m/Y', strtotime($doc['uploaded_at'])) ?>
+
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="/document/delete?id=<?= $doc['id'] ?>"
+                                class="btn btn-danger btn-sm"
+                                onclick="return confirm('Delete document?')">
+
+                                Delete
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                <?php endforeach; ?>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <div class="card-header">
+
+        Unit Images
+
+    </div>
+
+    <div class="card-body">
+
+        <form
+            action="/image/upload"
+            method="POST"
+            enctype="multipart/form-data">
+
+            <input
+                type="hidden"
+                name="unit_id"
+                value="<?= $id ?>">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Image Description
+                </label>
+
+                <input
+                    type="text"
+                    name="image_name"
+                    class="form-control"
+                    required>
+
+            </div>
+
+            <div class="mb-3">
+
+                <input
+                    type="file"
+                    name="image"
+                    class="form-control"
+                    accept=".jpg,.jpeg,.png,.webp"
+                    required>
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary">
+
+                Upload Image
+
+            </button>
+
+        </form>
+
+        <hr>
+
+        <div class="row">
+
+            <?php foreach ($images as $image): ?>
+
+                <div class="col-md-3 mb-3">
+
+                    <div class="card gallery-card">
+
+                        <img
+                            src="/uploads/images/<?= $image['stored_filename'] ?>"
+                            class="card-img-top"
+                            style="height:200px;object-fit:cover;"
+                            alt="<?= htmlspecialchars($image['image_name']) ?>">
+
+                        <div class="card-body">
+
+                            <h6>
+
+                                <?= htmlspecialchars($image['image_name']) ?>
+
+                            </h6>
+
+                            <div class="mt-3">
+
+                                <a
+                                    href="/uploads/images/<?= $image['stored_filename'] ?>"
+                                    target="_blank"
+                                    class="btn btn-primary btn-sm">
+
+                                    View
+
+                                </a>
+
+                                <a
+                                    href="/image/delete?id=<?= $image['id'] ?>"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Delete image?')">
+
+                                    Delete
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            <?php endforeach; ?>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card mt-4">
+
+    <div class="card-header">
+
+        Unit History
+
+    </div>
+
+    <div class="card-body">
+
+        <?php if (empty($history)): ?>
+
+            <p class="text-muted">
+
+                No history available.
+
+            </p>
+
+        <?php else: ?>
+
+            <ul class="list-group">
+
+                <?php foreach ($history as $item): ?>
+
+                    <li class="list-group-item">
+
+                        <strong>
+
+                            <?= date(
+                                'd/m/Y H:i',
+                                strtotime(
+                                    $item['created_at']
+                                )
+                            ) ?>
+
+                        </strong>
+
+                        <br>
+
+                        <?= htmlspecialchars(
+                            $item['description']
+                        ) ?>
+
+                    </li>
+
+                <?php endforeach; ?>
+
+            </ul>
+
+        <?php endif; ?>
+
+    </div>
+
+</div>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const alerts = [
+
+        'saveAlert',
+        'uploadAlert',
+        'deleteAlert',
+        'imageAlert',
+        'imageDeleteAlert'
+
+    ];
+
+    alerts.forEach(function(id) {
+
+        const alert = document.getElementById(id);
+
+        if (alert) {
+
+            setTimeout(function() {
+
+                bootstrap.Alert
+                    .getOrCreateInstance(alert)
+                    .close();
+
+            }, 5000);
+
+        }
+
+    });
+
+});
+
+</script>
+
+<?php
+
+$content = ob_get_clean();
+
+include __DIR__ . '/layouts/main.php';

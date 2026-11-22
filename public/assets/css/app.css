@@ -1,0 +1,203 @@
+/* ======================================================
+   GLOBAL
+====================================================== */
+
+body {
+    background-color: #f4f6f9;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.main-content {
+    padding: 25px;
+}
+
+/* ======================================================
+   NAVBAR
+====================================================== */
+
+.navbar-brand {
+    font-weight: 600;
+}
+
+/* ======================================================
+   SIDEBAR
+====================================================== */
+
+.sidebar {
+    background: #212529;
+    min-height: 100vh;
+}
+
+.sidebar .nav-link {
+    color: #ffffff;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    transition: all .2s ease;
+}
+
+.sidebar .nav-link:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+.sidebar .nav-link.active {
+    background: #0d6efd;
+}
+
+/* ======================================================
+   CARDS
+====================================================== */
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+}
+
+.stat-card h2 {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.stat-card {
+    text-align: center;
+}
+
+.progress {
+    border-radius: 10px;
+}
+
+.progress-bar {
+    font-weight: 600;
+}
+
+/* ======================================================
+   TABLES
+====================================================== */
+
+.table {
+    background: #ffffff;
+}
+
+.table thead th {
+    font-weight: 600;
+}
+
+/* ======================================================
+   DATATABLES
+====================================================== */
+
+.dataTables_wrapper {
+    margin-top: 15px;
+}
+
+.dataTables_filter input {
+    border-radius: 6px;
+}
+
+.dataTables_length select {
+    border-radius: 6px;
+}
+
+/* ======================================================
+   UNIT STATUS BADGES
+====================================================== */
+
+.summary-badge {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.badge-vacant {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.badge-occupied {
+    background-color: #198754;
+}
+
+.badge-reserved {
+    background-color: #0d6efd;
+}
+
+/* ======================================================
+   ARREARS BADGES
+====================================================== */
+
+.badge-current {
+    background-color: #198754;
+}
+
+.badge-outstanding {
+    background-color: #fd7e14;
+}
+
+.badge-overdue {
+    background-color: #dc3545;
+}
+
+/* ======================================================
+   FORMS
+====================================================== */
+
+.form-control,
+.form-select {
+    border-radius: 8px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* ======================================================
+   ALERTS
+====================================================== */
+
+.auto-alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    min-width: 350px;
+    z-index: 9999;
+
+    box-shadow:
+        0 4px 15px rgba(0,0,0,.15);
+}
+
+/* ======================================================
+   BUTTONS
+====================================================== */
+
+.btn {
+    border-radius: 8px;
+}
+
+/* ======================================================
+   UNIT EDIT PAGE
+====================================================== */
+
+.unit-header {
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+
+@media (max-width: 768px) {
+
+    .auto-alert {
+        left: 10px;
+        right: 10px;
+        min-width: auto;
+    }
+
+.table-hover tbody tr:hover {
+    background-color: rgba(13,110,253,.05);
+}
+    .sidebar {
+        min-height: auto;
+    }
+}
